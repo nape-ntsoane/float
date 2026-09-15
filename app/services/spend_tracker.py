@@ -10,9 +10,12 @@ class SpendStateTracker:
         self.account = account
         self.true_available_balance = true_available_balance
         self.cumulative_variable_spend = 0.0
+        self.transaction_history: list[Transaction] = []
 
     # updates running state for one transaction and returns the state at that point
     def apply(self, transaction: Transaction) -> SpendState:
+        self.transaction_history.append(transaction)
+
         # amounts are signed - a refund returns spending capacity, so it
         # reduces spend rather than counting as fresh income
         if transaction.bucket == Bucket.variable:
@@ -34,4 +37,6 @@ class SpendStateTracker:
             daily_allowance=genuinely_free / remaining if remaining > 0 else genuinely_free,
             days_elapsed=days_elapsed(self.account.period_start, transaction.transaction_date),
             days_remaining=remaining,
+            
+            transaction_history=list(self.transaction_history),  # copied, so it won't grow later
         )

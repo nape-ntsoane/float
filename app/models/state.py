@@ -1,5 +1,7 @@
 from pydantic import BaseModel
 
+from app.models.transaction import Transaction
+
 
 # the running position at one point in the chronological replay
 class SpendState(BaseModel):
@@ -10,3 +12,4 @@ class SpendState(BaseModel):
     daily_allowance: float
     days_elapsed: int
     days_remaining: int
+    transaction_history: list[Transaction]  # everything seen up to and including this point

@@ -1,6 +1,6 @@
 from app.models.notification import Notification
 from app.repositories.transaction import TransactionRepository
-from app.rules.threshold_rule import ThresholdRule
+from app.rules.rule import Rule
 from app.services.balance_service import BalanceService
 from app.services.classification_service import ClassificationService
 from app.services.spend_tracker import SpendStateTracker
@@ -8,7 +8,7 @@ from app.services.spend_tracker import SpendStateTracker
 
 class EventLoop:
     # a list - each rule is called and read the same way regardless of which ones are active
-    def __init__(self, repository: TransactionRepository, rules: list[ThresholdRule]) -> None:
+    def __init__(self, repository: TransactionRepository, rules: list[Rule]) -> None:
         self.repository = repository
         self.rules = rules
 
