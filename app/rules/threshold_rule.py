@@ -4,6 +4,10 @@ from app.models.notification import Notification
 from app.models.state import SpendState
 from app.models.transaction import Transaction
 from app.services.message_composer import MessageComposer
+from app.utils.math_utils import projected_range
+
+# the level that also gets a projected close in its message - see compose_threshold_message
+LEVEL_WITH_PROJECTION = 95
 
 
 class ThresholdRule:
@@ -26,10 +30,23 @@ class ThresholdRule:
                         triggering_rule="threshold",
                         triggering_event=transaction.transaction_id,
                         timestamp=transaction.transaction_date,
-                        message=self.composer.compose_threshold_message(level, state),
+                        message=self._compose(level, state, transaction),
                     )
                 )
         return findings
+
+    # composes a message for the level, optionally including a projected close if it's the highest level
+    def _compose(self, level: int, state: SpendState, transaction: Transaction) -> str:
+        if level != LEVEL_WITH_PROJECTION:
+            return self.composer.compose_threshold_message(level, state)
+        low, high = projected_range(
+            state.transaction_history,
+            transaction.running_balance,
+            transaction.transaction_date,
+            state.days_elapsed,
+            state.days_remaining,
+        )
+        return self.composer.compose_threshold_message(level, state, projected_range=(low, high))
 
     # 50/75 are a heads up, 90/95 mean real risk of ending the month short
     def _severity_for(self, level: int) -> Severity:

@@ -8,6 +8,7 @@ from app.repositories.transaction import TransactionRepository
 from app.rules.commitment_rule import CommitmentRule
 from app.rules.impulse_rule import ImpulseRule
 from app.rules.projection_rule import ProjectionRule
+from app.rules.recognition_rule import RecognitionRule
 from app.rules.rule import Rule
 from app.rules.threshold_rule import ThresholdRule
 from app.services.commitment_service import CommitmentService
@@ -30,6 +31,7 @@ def get_event_loop() -> EventLoop:
         ThresholdRule(composer),
         ImpulseRule(composer),
         ProjectionRule(composer),
+        RecognitionRule(composer),
         CommitmentRule(_commitment_repository, composer),
     ]
     return EventLoop(repository, _commitment_repository, rules)

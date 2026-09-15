@@ -10,20 +10,40 @@ def fmt(amount: float) -> str:
     return f"R{abs(round(amount)):,}"
 
 
+# fmt() strips signs, so the display order has to flip when both bounds are
+# negative - otherwise "between X and Y" reads backwards once printed unsigned
+def describe_range(low: float, high: float) -> str:
+    if high < 0:
+        return f"between {fmt(high)} and {fmt(low)} short"
+    if low < 0:
+        return f"between {fmt(low)} short and {fmt(high)} ahead"
+    return f"between {fmt(low)} and {fmt(high)} ahead"
+
+
 class MessageComposer:
-    def compose_threshold_message(self, level: int, state: SpendState) -> str:
+    # projected_range is only ever passed for the 95% level - the design calls
+    # for a projected close at that level specifically, nothing about a credit
+    # product ever appears here, deliberately
+    def compose_threshold_message(
+        self, level: int, state: SpendState, projected_range: tuple[float, float] | None = None
+    ) -> str:
         # fmt() strips the sign, so a negative genuinely_free needs its own
         # wording rather than reading as money still available
         if state.genuinely_free < 0:
-            return (
+            message = (
                 f"You've used {level}% of what's actually yours this month, "
                 f"and you're already {fmt(state.genuinely_free)} over."
             )
-        return (
-            f"You've used {level}% of what's actually yours this month. "
-            f"That leaves {fmt(state.genuinely_free)} for the next {state.days_remaining} days, "
-            f"about {fmt(state.daily_allowance)} a day."
-        )
+        else:
+            message = (
+                f"You've used {level}% of what's actually yours this month. "
+                f"That leaves {fmt(state.genuinely_free)} for the next "
+                f"{state.days_remaining} days, about {fmt(state.daily_allowance)} a day."
+            )
+        if projected_range is not None:
+            low, high = projected_range
+            message += f" At this pace, you'll close the month {describe_range(low, high)}."
+        return message
 
     # mean is None below the minimum sample - nothing real to compare against yet
     def compose_impulse_message(
@@ -44,18 +64,15 @@ class MessageComposer:
     def compose_projection_message(self, low: float, high: float) -> str:
         if high < 0:
             return (
-                f"At your current pace, you're on track to be between {fmt(high)} and {fmt(low)} "
-                f"short by the end of the month."
+                f"At your current pace, you're on track to be {describe_range(low, high)} "
+                f"by the end of the month."
             )
         if low < 0:
             return (
-                f"Your current pace puts you anywhere from {fmt(low)} short to {fmt(high)} ahead "
+                f"Your current pace puts you {describe_range(low, high)} "
                 f"by the end of the month - it could go either way."
             )
-        return (
-            f"You're on track to end the month between {fmt(low)} and {fmt(high)} ahead. "
-            f"Keep going."
-        )
+        return f"You're on track to end the month {describe_range(low, high)}. Keep going."
 
     def compose_position_message(self, state: SpendState) -> str:
         if state.genuinely_free < 0:
@@ -102,3 +119,9 @@ class MessageComposer:
         if commitment.type == CommitmentType.abstain:
             return f"You kept your commitment - no {scope} this period."
         return f"You kept {scope} under {fmt(commitment.target_value or 0)} - nice work."
+
+    def compose_recognition_message(self, category_name: str, days_since: int) -> str:
+        return (
+            f"You haven't spent on {category_name.lower()} in {days_since} days - "
+            f"well outside your usual pattern. Worth keeping up."
+        )
