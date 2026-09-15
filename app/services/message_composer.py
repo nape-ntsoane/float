@@ -1,3 +1,5 @@
+from app.models.enums import IntentionVerdict
+from app.models.intention import IntentionResult
 from app.models.state import SpendState
 from app.models.transaction import Transaction
 
@@ -53,3 +55,27 @@ class MessageComposer:
             f"You're on track to end the month between {fmt(low)} and {fmt(high)} ahead. "
             f"Keep going."
         )
+
+    def compose_position_message(self, state: SpendState) -> str:
+        if state.genuinely_free < 0:
+            return (
+                f"You're {fmt(state.genuinely_free)} over for the month, "
+                f"{state.days_remaining} days left."
+            )
+        return (
+            f"You've got {fmt(state.genuinely_free)} left for the next "
+            f"{state.days_remaining} days, about {fmt(state.daily_allowance)} a day."
+        )
+
+    def compose_intention_message(self, result: IntentionResult) -> str:
+        if result.verdict == IntentionVerdict.comfortable:
+            return f"Yes - you'd still have {fmt(result.provisional_free)} left this month."
+        if result.verdict == IntentionVerdict.affordable_but_risky:
+            return (
+                f"You can afford it right now, but it pushes you {fmt(result.provisional_close)} "
+                f"short by month end."
+            )
+        if result.days_until_affordable is not None:
+            days = round(result.days_until_affordable)
+            return f"Not from what's left this month - about {days} more days."
+        return "Not from what's left this month."

@@ -1,12 +1,10 @@
-from datetime import timedelta
-
-from app.constants.buckets import Bucket
 from app.constants.thresholds import PROJECTION_TRAILING_WINDOWS_DAYS
 from app.models.enums import Severity
 from app.models.notification import Notification
 from app.models.state import SpendState
 from app.models.transaction import Transaction
 from app.services.message_composer import MessageComposer
+from app.utils.math_utils import burn_rate
 
 
 class ProjectionRule:
@@ -36,19 +34,7 @@ class ProjectionRule:
         ]
 
     def _project(self, state: SpendState, transaction: Transaction, window_days: int) -> float:
-        burn_rate = self._burn_rate(state, transaction, window_days)
-        return transaction.running_balance - (burn_rate * state.days_remaining)
-
-    # average daily variable spend in the trailing window
-    def _burn_rate(self, state: SpendState, transaction: Transaction, window_days: int) -> float:
-        cutoff = transaction.transaction_date - timedelta(days=window_days)
-        in_window = [
-            t
-            for t in state.transaction_history
-            if t.bucket == Bucket.variable and t.transaction_date >= cutoff
-        ]
-        
-        if not in_window:
-            return 0.0
-        actual_days = min(window_days, state.days_elapsed)  # can't exceed days elapsed so far
-        return sum(abs(t.amount) for t in in_window) / actual_days
+        rate = burn_rate(
+            state.transaction_history, transaction.transaction_date, window_days, state.days_elapsed
+        )
+        return transaction.running_balance - (rate * state.days_remaining)
