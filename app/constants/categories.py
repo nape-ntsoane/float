@@ -17,6 +17,8 @@ CATEGORY_NAMES: dict[int, str] = {
     199: "Uncategorised / Unusual",
 }
 
+TRANSFERS_CATEGORY_ID = 104
+
 # 104 (Transfers) has no fixed bucket, it depends on the narrative - see below
 CATEGORY_BUCKETS: dict[int, Bucket] = {
     100: Bucket.income,

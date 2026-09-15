@@ -2,6 +2,7 @@ from datetime import datetime
 
 from pydantic import BaseModel
 
+from app.constants.buckets import Bucket
 from app.models.enums import Direction, SettlementStatus
 
 
@@ -15,9 +16,12 @@ class Transaction(BaseModel):
     category_name: str
     narrative: str
     running_balance: float
-    
+
     # provisional = a declared intention, not a real transaction yet
     settlement_status: SettlementStatus = SettlementStatus.settled
+
+    # set by ClassificationService, absent until classified
+    bucket: Bucket | None = None
 
 
 # the case study's account block
