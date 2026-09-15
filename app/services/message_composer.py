@@ -1,4 +1,5 @@
-from app.models.enums import IntentionVerdict
+from app.models.commitment import Commitment
+from app.models.enums import CommitmentType, IntentionVerdict
 from app.models.intention import IntentionResult
 from app.models.state import SpendState
 from app.models.transaction import Transaction
@@ -79,3 +80,25 @@ class MessageComposer:
             days = round(result.days_until_affordable)
             return f"Not from what's left this month - about {days} more days."
         return "Not from what's left this month."
+
+    # states what happened and where things stand
+    def compose_commitment_broken_message(
+        self, commitment: Commitment, transaction: Transaction
+    ) -> str:
+        scope = commitment.scope.lower()
+        if commitment.type == CommitmentType.abstain:
+            return (
+                f"You'd committed to no {scope} this period. "
+                f"{fmt(transaction.amount)} at {transaction.category_name.lower()} breaks that."
+            )
+        over = commitment.cumulative_in_scope_spend - (commitment.target_value or 0)
+        return (
+            f"You'd committed to keeping {scope} under {fmt(commitment.target_value or 0)}. "
+            f"You're now {fmt(over)} over."
+        )
+
+    def compose_commitment_upheld_message(self, commitment: Commitment) -> str:
+        scope = commitment.scope.lower()
+        if commitment.type == CommitmentType.abstain:
+            return f"You kept your commitment - no {scope} this period."
+        return f"You kept {scope} under {fmt(commitment.target_value or 0)} - nice work."
