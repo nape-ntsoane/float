@@ -1,15 +1,13 @@
 from datetime import datetime
 
+from app.engine.replay import prepare_replay
 from app.models.enums import CommandType, CommitmentType
 from app.models.state import SpendState
 from app.repositories.transaction import TransactionRepository
 from app.schemas.chat import InboundMessage, OutboundMessage
-from app.services.balance_service import BalanceService
-from app.services.classification_service import ClassificationService
 from app.services.commitment_service import CommitmentService
 from app.services.intention_service import IntentionEvaluationService
 from app.services.message_composer import MessageComposer
-from app.services.spend_tracker import SpendStateTracker
 
 MENU_OPTIONS = ["Check my position", "Can I afford something?", "Make a commitment"]
 
@@ -64,11 +62,7 @@ class InteractionHandler:
 
     # recomputed fresh each call - no session or cache, just the one fixed dataset
     def _current_state(self) -> SpendState:
-        account = self.repository.load_account()
-        transactions = self.repository.load_transactions()
-        ClassificationService().classify_all(transactions)
-        true_available = BalanceService().compute_true_available(transactions)
-        tracker = SpendStateTracker(account, true_available, self.commitment_service.repository)
+        transactions, tracker = prepare_replay(self.repository, self.commitment_service.repository)
 
         state = None
         for transaction in transactions:

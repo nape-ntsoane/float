@@ -1,8 +1,7 @@
-from app.constants.thresholds import PROJECTION_TRAILING_WINDOWS_DAYS
 from app.models.enums import IntentionVerdict
 from app.models.intention import IntentionResult
 from app.models.state import SpendState
-from app.utils.math_utils import burn_rate
+from app.utils.math_utils import projected_range
 
 
 class IntentionEvaluationService:
@@ -33,15 +32,14 @@ class IntentionEvaluationService:
     # should be checked against the most pessimistic reasonable outlook, not the average one
     def _projected_close(self, state: SpendState) -> float:
         last = state.transaction_history[-1]
-        windows = [*PROJECTION_TRAILING_WINDOWS_DAYS, state.days_elapsed]
-        projections = [
-            last.running_balance - rate * state.days_remaining
-            for rate in (
-                burn_rate(state.transaction_history, last.transaction_date, w, state.days_elapsed)
-                for w in windows
-            )
-        ]
-        return min(projections)
+        low, _ = projected_range(
+            state.transaction_history,
+            last.running_balance,
+            last.transaction_date,
+            state.days_elapsed,
+            state.days_remaining,
+        )
+        return low
 
     def _days_until_affordable(self, state: SpendState, amount: float) -> float | None:
         if state.daily_allowance <= 0:

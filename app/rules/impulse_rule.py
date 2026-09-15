@@ -22,9 +22,9 @@ class ImpulseRule:
 
         is_unusual = transaction.category_id == UNUSUAL_CATEGORY_ID
         mean = self._mean_variable_transaction(state, transaction)
-        floor = IMPULSE_ABSOLUTE_FLOOR  # used until the mean is trustworthy
-        threshold = floor if mean is None else mean * IMPULSE_MULTIPLIER
-        
+        # IMPULSE_ABSOLUTE_FLOOR is used until the mean is trustworthy
+        threshold = IMPULSE_ABSOLUTE_FLOOR if mean is None else mean * IMPULSE_MULTIPLIER
+
         if abs(transaction.amount) <= threshold and not is_unusual:
             return []  # either condition alone is enough to flag
 

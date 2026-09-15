@@ -1,10 +1,8 @@
+from app.engine.replay import prepare_replay
 from app.models.notification import Notification
 from app.repositories.commitment import CommitmentRepository
 from app.repositories.transaction import TransactionRepository
 from app.rules.rule import Rule
-from app.services.balance_service import BalanceService
-from app.services.classification_service import ClassificationService
-from app.services.spend_tracker import SpendStateTracker
 
 
 class EventLoop:
@@ -21,13 +19,7 @@ class EventLoop:
 
     # replays the period chronologically, one transaction at a time
     def run(self) -> list[Notification]:
-        account = self.repository.load_account()
-        transactions = self.repository.load_transactions()
-
-        # true_available_balance needs every transaction classified first
-        ClassificationService().classify_all(transactions)
-        true_available = BalanceService().compute_true_available(transactions)
-        tracker = SpendStateTracker(account, true_available, self.commitment_repository)
+        transactions, tracker = prepare_replay(self.repository, self.commitment_repository)
 
         notifications: list[Notification] = []
         for transaction in transactions:
