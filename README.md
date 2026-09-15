@@ -1,16 +1,17 @@
-# Standard Bank PPB Technology Graduate Assessment
+# Float
 
-A rule based engine that computes a customer's true available balance from a month of transaction data, tracks spend against it, and raises notifications (impulse flags, month end projections, threshold alerts, affordability checks, commitment tracking) as the month plays out.
+A rule based engine, built for the Standard Bank PPB Technology Graduate Assessment (Digital Platforms stream), that computes a customer's true available balance from a month of transaction data, tracks spend against it, and raises notifications (impulse flags, month end projections, threshold alerts, affordability checks, commitment tracking) as the month plays out.
 
 ## Running it
 
 ```
 uv sync
+cp .env.example .env
 uv run python serve.py
 uv run pytest
 ```
 
-The API comes up on http://localhost:8080.
+The API comes up on http://localhost:8080. Everything in .env has a working default, copying it over is only needed if you want to change something.
 
 The case study's Transaction_DP.txt needs to sit in the data folder before the engine has anything to process. See data/README.md for what it expects.
 
@@ -20,7 +21,11 @@ Everything lives under app, with main.py wiring up the FastAPI app and registeri
 
 api holds the routers, kept thin, one per feature area. They take the request and hand it straight to a service, nothing more.
 
-models holds the data shapes, transactions, notifications, commitments, the running state object. No logic in here, just structure.
+core holds app wide setup, right now just settings loaded from environment variables (see .env.example).
+
+models holds the internal data shapes, transactions, notifications, commitments, the running state object. No logic in here, just structure.
+
+schemas holds the request and response shapes for the API, kept separate from the internal models above since what a client sends or receives isn't always the same shape the engine works with internally.
 
 repositories is where the transaction data gets read from disk.
 

@@ -1,11 +1,12 @@
 [project]
-name = "standard-bank"
+name = "float"
 version = "0.1.0"
-description = "True Available Balance engine — Standard Bank PPB Technology Graduate Assessment"
+description = "Float — True Available Balance engine for the Standard Bank PPB Technology Graduate Assessment"
 requires-python = ">=3.12"
 dependencies = [
     "fastapi[standard]>=0.115.0",
     "uvicorn[standard]>=0.30.0",
+    "pydantic-settings>=2.4.0",
 ]
 
 [dependency-groups]

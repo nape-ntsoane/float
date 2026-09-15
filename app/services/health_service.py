@@ -1,4 +1,4 @@
-from app.models.health import HealthResponse
+from app.schemas.health import HealthResponse
 
 
 class HealthService:

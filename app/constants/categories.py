@@ -1,9 +1,3 @@
-"""Category identifiers and their bucket assignments, transcribed from the
-Technical Design (plan/07_Technical_Design.md, Section 7). Every value here
-is a design decision recorded in that document, not a code fix - changing a
-bucket assignment means updating the design doc first.
-"""
-
 from app.constants.buckets import Bucket
 
 CATEGORY_NAMES: dict[int, str] = {
@@ -23,17 +17,12 @@ CATEGORY_NAMES: dict[int, str] = {
     199: "Uncategorised / Unusual",
 }
 
-TRANSFERS_CATEGORY_ID = 104
-"""The one category with no static bucket - see CATEGORY_BUCKETS below."""
-
+# 104 (Transfers) has no fixed bucket, it depends on the narrative - see below
 CATEGORY_BUCKETS: dict[int, Bucket] = {
     100: Bucket.income,
     101: Bucket.variable,
     102: Bucket.variable,
-    103: Bucket.variable,  # D1 - discretionary and individually cancellable
-    # 104 (Transfers) is intentionally absent: its bucket depends on the
-    # transaction's narrative, not its category ID alone. See the sub-rule
-    # constants below and ClassificationService, which applies them.
+    103: Bucket.variable,
     105: Bucket.variable,
     106: Bucket.variable,
     107: Bucket.variable,
@@ -41,13 +30,10 @@ CATEGORY_BUCKETS: dict[int, Bucket] = {
     109: Bucket.credit_back,
     110: Bucket.committed,
     111: Bucket.committed,
-    112: Bucket.variable,  # D2 - visible as a consequence of customer behaviour
-    199: Bucket.variable,  # also always raises an impulse flag - see R2
+    112: Bucket.variable,
+    199: Bucket.variable,
 }
 
-# Narrative sub-rule for category 104 (Transfers) - Section 7. A transfer
-# whose narrative contains either string below is COMMITTED; any other
-# transfer is VARIABLE. Matched by ClassificationService - this module holds
-# only the literal strings the design document specifies.
+# a transfer narrative containing either of these is COMMITTED, anything else VARIABLE
 SAVINGS_POCKET_NARRATIVE = "SAVINGS POCKET"
 FAMILY_SUPPORT_NARRATIVE = "FAMILY SUPPORT"

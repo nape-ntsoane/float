@@ -1,0 +1,57 @@
+=== TRANSACTION DATA ANALYSIS RESULTS ===
+
+--- 1. OVERALL CASHFLOW ---
+Total Income: R 49,388.00
+Total Expense: R 53,534.14
+Net Cashflow: R -4,146.14
+Closing Balance: R -2,270.74
+
+--- 2. FIXED VS VARIABLE SPEND ---
+Fixed: R 23,589.00 (44.1%)
+Variable: R 29,945.14 (55.9%)
+
+--- 3. CATEGORY BREAKDOWN ---
+Fixed Commitments: R 12,550.00 (23.4%)
+Groceries: R 7,387.15 (13.8%)
+Once-off Large Purchase: R 6,499.00 (12.1%)
+Debit Order: R 5,748.00 (10.7%)
+Transfers: R 5,000.00 (9.3%)
+Uncategorised / Unusual: R 4,399.00 (8.2%)
+Transport: R 3,873.00 (7.2%)
+Online Purchases: R 2,618.00 (4.9%)
+Discretionary Spending: R 2,402.00 (4.5%)
+Cash Withdrawal: R 2,400.00 (4.5%)
+Subscriptions: R 366.99 (0.7%)
+Bank Fees: R 291.00 (0.5%)
+
+--- 4. WEEKDAY VS WEEKEND AVERAGE ---
+Average Weekday Spend (Per Day): R 1,438.00
+Average Weekend Spend (Per Day): R 2,477.40
+
+--- 5. SPEND BY DAY OF THE WEEK ---
+Monday: R 8,395.99
+Tuesday: R 5,002.00
+Wednesday: R 4,716.00
+Thursday: R 4,231.00
+Friday: R 6,415.10
+Saturday: R 17,317.00
+Sunday: R 7,457.05
+
+--- 6. WEEKLY SPEND ---
+Week 31: R 18,580.60
+Week 32: R 9,436.40
+Week 33: R 12,667.19
+Week 34: R 6,001.65
+Week 35: R 6,848.30
+
+--- 7. TOP 10 LARGEST EXPENSES ---
+2026-08-01 | Fixed Commitments | DEBIT ORDER - HOME LOAN REPAYMENT | R 8,200.00
+2026-08-10 | Once-off Large Purchase | CARD PURCHASE - FURNITURE STORE (ONCE-OFF) | R 6,499.00
+2026-08-01 | Fixed Commitments | DEBIT ORDER - VEHICLE FINANCE | R 4,350.00
+2026-08-02 | Debit Order | DEBIT ORDER - MEDICAL AID | R 2,650.00
+2026-08-29 | Uncategorised / Unusual | CARD PURCHASE - GAMING / CRYPTO PLATFORM | R 2,500.00
+2026-08-02 | Transfers | TRANSFER TO SAVINGS POCKET | R 2,000.00
+2026-08-15 | Uncategorised / Unusual | CARD PURCHASE - INTERNATIONAL ONLINE (UNRECOGNISED MERCHANT) | R 1,899.00
+2026-08-14 | Groceries | CARD PURCHASE - WOOLWORTHS | R 1,620.80
+2026-08-04 | Transfers | TRANSFER TO BENEFICIARY - FAMILY SUPPORT | R 1,500.00
+2026-08-18 | Transfers | TRANSFER TO BENEFICIARY - FAMILY SUPPORT | R 1,500.00

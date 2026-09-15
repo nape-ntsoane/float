@@ -1,3 +1,4 @@
+# what GET /health returns
 from pydantic import BaseModel
 
 
